@@ -1,0 +1,32 @@
+name: 'Badword CI Check'
+description: 'Scan changes for profanity / slurs / numeric slurs. Allows compliant masking (f**k / sh*t), skips IP addresses and version numbers. Pure bash, zero dependencies.'
+author: 'MEMZ-CHROER'
+inputs:
+  base:
+    description: 'Base commit SHA to diff against (scans only the PR changes).'
+    required: false
+  files:
+    description: 'Space-separated file paths to scan (overrides `base`).'
+    required: false
+  wordlists:
+    description: 'Directory containing custom badwords-sub.txt / badwords-word.txt / badwords-number.txt (defaults to the bundled ones).'
+    required: false
+branding:
+  icon: 'shield'
+  color: 'red'
+runs:
+  using: 'composite'
+  steps:
+    - name: Run badword check
+      shell: bash
+      run: |
+        set -e
+        ARGS=()
+        if [ -n "${{ inputs.wordlists }}" ]; then ARGS+=(--wordlists "${{ inputs.wordlists }}"); fi
+        if [ -n "${{ inputs.files }}" ]; then
+          bash "${{ github.action_path }}/profanity-check.sh" "${ARGS[@]}" --files ${{ inputs.files }}
+        elif [ -n "${{ inputs.base }}" ]; then
+          bash "${{ github.action_path }}/profanity-check.sh" "${ARGS[@]}" "${{ inputs.base }}"
+        else
+          bash "${{ github.action_path }}/profanity-check.sh" "${ARGS[@]}"
+        fi

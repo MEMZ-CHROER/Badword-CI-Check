@@ -31,6 +31,8 @@ bash profanity-check.sh --files docs/a.md docs/b.md
 
 ### GitHub Actions（PR 检查）
 
+推荐直接用已发布的 Action（自动带上内置词库，无需复制任何文件）：
+
 ```yaml
 name: Badword Check
 on:
@@ -43,9 +45,25 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+      - uses: MEMZ-CHROER/Badword-CI-Check@v1
+        with:
+          base: ${{ github.event.pull_request.base.sha }}
+```
+
+不想用 Action，直接跑脚本也可以（脚本会用同目录内置词库，`--wordlists <dir>` 可换成自定义词库）：
+
+```yaml
       - name: 扫描 PR 改动
         run: bash profanity-check.sh ${{ github.event.pull_request.base.sha }}
 ```
+
+**Action 输入**：
+
+| 输入 | 说明 |
+|---|---|
+| `base` | 相对 base SHA 的改动（PR 场景） |
+| `files` | 空格分隔的文件列表（覆盖 `base`） |
+| `wordlists` | 自定义词库所在目录（缺省用内置） |
 
 ## 词库
 

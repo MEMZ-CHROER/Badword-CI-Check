@@ -9,18 +9,25 @@
 # 合规打码（f**k / sh*t / D****S 等含 `*` 形式）天然放行——词库不含打码形式。
 #
 # 用法：
-#   bash profanity-check.sh              # 扫描全部已跟踪文件
-#   bash profanity-check.sh <base-sha>   # 仅扫描 PR/分支相对 base 的改动（CI 用）
+#   bash profanity-check.sh                              # 扫描全部已跟踪文件
+#   bash profanity-check.sh <base-sha>                   # 仅扫描 PR/分支相对 base 的改动（CI 用）
+#   bash profanity-check.sh --files a.md b.md            # 扫描指定文件
+#   bash profanity-check.sh --wordlists <dir> [args...]  # 使用自定义词库目录
 #
 # 可选：仓库根放 .profanity-ignore（每行一个 glob，匹配的文件跳过，`#` 开头为注释）
 set -euo pipefail
 # grep 需要可用的 locale（Git Bash 默认 locale 可能缺失）
 export LC_ALL=C
 
+# 词库目录：默认与脚本同目录（脚本可放在任意位置、被 action 引用），可用 --wordlists <dir> 覆盖为自定义词库
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+WL_DIR="$SCRIPT_DIR"
+if [ "${1:-}" = "--wordlists" ] && [ -n "${2:-}" ]; then WL_DIR="$2"; shift 2; fi
+
 # tr -d '\r'：兼容 Windows git autocrlf（工作区文件 CRLF，词条/ignore 行尾带 \r 会破坏匹配）
-SUB_LIST="$(grep -vE '^\s*(#|$)' badwords-sub.txt | tr -d '\r')"
-WORD_RE="$(grep -vE '^\s*(#|$)' badwords-word.txt | tr -d '\r' | paste -sd'|')"
-NUM_RE="$(grep -vE '^\s*(#|$)' badwords-number.txt | tr -d '\r' | paste -sd'|')"
+SUB_LIST="$(grep -vE '^\s*(#|$)' "$WL_DIR/badwords-sub.txt" | tr -d '\r')"
+WORD_RE="$(grep -vE '^\s*(#|$)' "$WL_DIR/badwords-word.txt" | tr -d '\r' | paste -sd'|')"
+NUM_RE="$(grep -vE '^\s*(#|$)' "$WL_DIR/badwords-number.txt" | tr -d '\r' | paste -sd'|')"
 
 # 待检查文件：--files 显式指定 / PR 改动（diff-filter=ACM）/ 全部已跟踪文件
 case "${1:-}" in
