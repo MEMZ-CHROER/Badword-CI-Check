@@ -17,9 +17,10 @@ set -euo pipefail
 # grep 需要可用的 locale（Git Bash 默认 locale 可能缺失）
 export LC_ALL=C
 
-SUB_LIST="$(grep -vE '^\s*(#|$)' badwords-sub.txt)"
-WORD_RE="$(grep -vE '^\s*(#|$)' badwords-word.txt | paste -sd'|')"
-NUM_RE="$(grep -vE '^\s*(#|$)' badwords-number.txt | paste -sd'|')"
+# tr -d '\r'：兼容 Windows git autocrlf（工作区文件 CRLF，词条/ignore 行尾带 \r 会破坏匹配）
+SUB_LIST="$(grep -vE '^\s*(#|$)' badwords-sub.txt | tr -d '\r')"
+WORD_RE="$(grep -vE '^\s*(#|$)' badwords-word.txt | tr -d '\r' | paste -sd'|')"
+NUM_RE="$(grep -vE '^\s*(#|$)' badwords-number.txt | tr -d '\r' | paste -sd'|')"
 
 # 待检查文件：--files 显式指定 / PR 改动（diff-filter=ACM）/ 全部已跟踪文件
 case "${1:-}" in
@@ -35,6 +36,7 @@ hits=0
 ignored() { # $1=文件路径，命中 .profanity-ignore 返回 0
   [ -f .profanity-ignore ] || return 1
   while IFS= read -r pat; do
+    pat="${pat%$'\r'}" # 兼容 CRLF 行尾
     [ -z "$pat" ] && continue
     case "$pat" in \#*) continue ;; esac
     case "$1" in $pat) return 0 ;; esac
