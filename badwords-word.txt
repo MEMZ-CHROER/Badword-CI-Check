@@ -1,0 +1,11 @@
+# 整词匹配词库：仅当独立成词才拦（ASCII 词边界，中文两侧也生效），防 usb/isby/abs 嵌入误报。
+# 注意：数字骂人梗不在此文件（见 badwords-number.txt），否则 grep -w 会把 IP 段（如 13.56.91.48 的 13/91）误报。
+sb
+5b
+s8
+cnm
+nmb
+qnmd
+wcnm
+qnmlgb
+wqnmlgb

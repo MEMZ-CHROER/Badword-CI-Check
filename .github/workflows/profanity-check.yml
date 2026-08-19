@@ -1,0 +1,17 @@
+name: Badword Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  badword:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: 扫描 PR 改动中的不雅用语
+        run: bash profanity-check.sh ${{ github.event.pull_request.base.sha }}
+      - name: 运行自测
+        run: bash test/run-tests.sh
