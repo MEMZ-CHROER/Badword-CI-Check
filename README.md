@@ -1,5 +1,5 @@
 # Badword-CI-Check
-
+# ** 测试测试 这是一句脏话 fuck 5h1t **
 🧪 轻量不雅用语 / 脏话 / 数字骂人梗扫描工具，grep + 词库实现，无外部依赖，可作为 PR 的 CI 检查。
 
 本工具从 [Cloudflare-Workers-Chat](https://github.com/MEMZ-CHROER/Cloudflare-Workers-Chat) 的敏感词库出发，针对**文档/内容仓库**场景定制：
