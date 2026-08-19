@@ -2,9 +2,9 @@
 # 🧪 Badword-CI-Check：不雅用语 / 脏话 / 数字骂人梗扫描，命中即 fail。
 #
 # 三份词库（均为纯文本，每行一词，`#` 开头为注释，可自行增删）：
-#   badwords-sub.txt    子串词（长词/中文/英文根，容忍派生词，如 fucking）
+#   badwords-sub.txt    子串词（长词/中文/英文根，容忍派生词）
 #   badwords-word.txt   整词词（拼音缩写，独立成词才拦，防 usb/isby/abs 嵌入误报）
-#   badwords-number.txt 数字骂人梗（13/78/91 及变体，独立 token 才拦，自动剔除 IP/版本号）
+#   badwords-number.txt 数字骂人梗（独立 token 才拦，自动剔除 IP/版本号）
 #
 # 合规打码（f**k / sh*t / D****S 等含 `*` 形式）天然放行——词库不含打码形式。
 #

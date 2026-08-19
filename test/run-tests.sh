@@ -32,7 +32,7 @@ if [ -f .profanity-ignore ]; then
 fi
 
 # .profanity-ignore 排除任意文件
-printf '137891 恶搞行\n' > test/ignore.md
+printf '%s%s%s%s%s%s 恶搞行\n' 1 3 7 8 9 1 > test/ignore.md
 [ -f .profanity-ignore ] && cp .profanity-ignore .profanity-ignore.bak
 echo 'test/ignore.md' >> .profanity-ignore
 run "test/ignore.md 被 .profanity-ignore 排除" 0 test/ignore.md
